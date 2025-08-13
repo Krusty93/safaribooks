@@ -1,0 +1,18 @@
+{
+  "profiles": {
+    "Development": {
+      "commandName": "Project",
+      "commandLineArgs": "--kindle 9781098162269",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development",
+      }
+    },
+    "Production": {
+      "commandName": "Project",
+      "commandLineArgs": "--kindle 9781098162269",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Production",
+      }
+    },
+  }
+}

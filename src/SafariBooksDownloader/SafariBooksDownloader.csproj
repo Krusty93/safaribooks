@@ -11,6 +11,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="Properties\launchSettings.json" />
+  
+    <Content Include="cookies.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.57" />
   </ItemGroup>
 
