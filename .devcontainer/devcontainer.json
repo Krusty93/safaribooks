@@ -7,7 +7,10 @@
             "extensions": [
                 "ms-dotnettools.csharp",
                 "ms-dotnettools.vscode-dotnet-runtime",
-                "ms-vscode.vscode-json"
+                "ms-vscode.vscode-json",
+                "github.vscode-github-actions",
+                "EditorConfig.EditorConfig",
+                "ionutvmi.path-autocomplete"
             ],
             "settings": {
                 "dotnet.defaultSolution": "src/SafariBooksDownloader/SafariBooksDownloader.csproj"

@@ -1,15 +1,15 @@
 # SafariBooks .NET Downloader
 
+*This project is a .NET 9 rewrite of the original [SafariBooks downloader](https://github.com/lorenzodifuccia/safaribooks) by [lorenzodifuccia](https://github.com/lorenzodifuccia). All credits for the original concept and implementation go to the original author.*
+
 Download and generate *EPUB* of your favorite books from [*O'Reilly Learning*](https://learning.oreilly.com) library using cookie-based authentication.
 
 I'm not responsible for the use of this program, this is only for *personal* and *educational* purpose.  
 Before any usage please read the *O'Reilly*'s [Terms of Service](https://learning.oreilly.com/terms/).
 
-<a href='https://ko-fi.com/Y8Y0MPEGU' target='_blank'><img height='60' style='border:0px;height:60px;' src='https://storage.ko-fi.com/cdn/kofi6.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com'/></a>
-
 ## Overview
 
-This is a .NET 8 console application that downloads books from O'Reilly Learning (Safari Books Online) and converts them to EPUB format using cookie-based authentication.
+This is a .NET 9 console application that downloads books from O'Reilly Learning (Safari Books Online) and converts them to EPUB format using cookie-based authentication.
 
 **Features:**
 - Cookie-based authentication (no login credentials required in the app)
@@ -20,77 +20,55 @@ This is a .NET 8 console application that downloads books from O'Reilly Learning
 
 ---
 
-## Requirements & Setup
+## How to Use
 
-### Prerequisites
-- .NET 8.0 Runtime or Docker (compatible with .NET 9.0 when available)
-- Valid O'Reilly Learning subscription
-- `cookies.json` file with your session cookies
+### Authentication Setup
 
-### Using .NET (Local Installation)
+The application uses cookie-based authentication, which is simpler and more secure than credential handling:
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/Krusty93/safaribooks.git
-   cd safaribooks
-   ```
+1. **Log in to O'Reilly Learning** in your browser at [learning.oreilly.com](https://learning.oreilly.com)
+2. **Open Developer Tools** (F12 or right-click → Inspect)
+3. **Go to the Application/Storage tab**
+4. **Navigate to Cookies** → `https://learning.oreilly.com`
+5. **Copy the relevant cookies** (especially `sessionid`, `csrftoken`)
+6. **Create cookies.json** file with the following format:
 
-2. **Build the application:**
-   ```bash
-   cd src/SafariBooksDownloader
-   dotnet build -c Release
-   ```
+```json
+{
+  "sessionid": "your_session_id_value",
+  "csrftoken": "your_csrf_token_value",
+  "BrowserId": "your_browser_id",
+  "optimizelyEndUserId": "your_optimizely_id"
+}
+```
 
-3. **Create cookies.json file:**
-   - Log in to [O'Reilly Learning](https://learning.oreilly.com) in your browser
-   - Extract cookies using browser developer tools
-   - Create a `cookies.json` file in the application directory with the format:
-   ```json
-   {
-     "sessionid": "your_session_id",
-     "csrftoken": "your_csrf_token",
-     "other_cookie": "other_value"
-   }
-   ```
+**Note:** Cookie values and names may vary. Copy all cookies from the `learning.oreilly.com` domain for best compatibility.
 
-### Using Docker
+### Finding the Book ID
 
-1. **Build the Docker image:**
-   ```bash
-   docker build -t safaribooks-downloader .
-   ```
+The Book ID is the digits found in the O'Reilly Learning URL:
+`https://learning.oreilly.com/library/view/book-name/XXXXXXXXXXXXX/`
 
-2. **Run with Docker:**
-   ```bash
-   docker run -v "$(pwd)/cookies.json:/app/cookies.json" \
-              -v "$(pwd)/Books:/app/Books" \
-              safaribooks-downloader <BOOK_ID>
-   ```
+For example, from this URL:
+`https://learning.oreilly.com/library/view/test-driven-development-with/9781491958698/`
 
-### Using Dev Container
+The Book ID would be: `9781491958698`
 
-1. Open the project in Visual Studio Code
-2. Install the "Dev Containers" extension
-3. Open Command Palette (`Ctrl+Shift+P`)
-4. Select "Dev Containers: Reopen in Container"
-5. The environment will be automatically configured
+### Basic Usage with Docker
 
----
-
-## Usage
-
-### Basic Usage
 ```bash
-# Using .NET directly
-dotnet run <BOOK_ID>
+# Build the Docker image
+docker build -t safaribooks-downloader .
 
-# Using published executable
-./SafariBooksDownloader <BOOK_ID>
-
-# Using Docker
+# Download a book
 docker run -v "$(pwd)/cookies.json:/app/cookies.json" \
            -v "$(pwd)/Books:/app/Books" \
            safaribooks-downloader <BOOK_ID>
+
+# With Kindle optimization
+docker run -v "$(pwd)/cookies.json:/app/cookies.json" \
+           -v "$(pwd)/Books:/app/Books" \
+           safaribooks-downloader --kindle <BOOK_ID>
 ```
 
 ### Command Options
@@ -107,39 +85,59 @@ optional arguments:
   --help               Show this help message.
 ```
 
-### Finding the Book ID
+---
 
-The Book ID is the digits found in the O'Reilly Learning URL:
-`https://learning.oreilly.com/library/view/book-name/XXXXXXXXXXXXX/`
+## Development Setup
 
-For example, from this URL:
-`https://learning.oreilly.com/library/view/test-driven-development-with/9781491958698/`
+### Using Dev Container (Recommended)
 
-The Book ID would be: `9781491958698`
+The project includes a complete development environment configuration that works with any IDE supporting dev containers:
+
+**Visual Studio Code:**
+1. Install the "Dev Containers" extension
+2. Open the project folder
+3. Open Command Palette (`Ctrl+Shift+P`)
+4. Select "Dev Containers: Reopen in Container"
+5. The environment will be automatically configured with .NET 9 SDK
+
+**JetBrains Rider/IntelliJ:**
+1. Use the "Remote Development" feature
+2. Select "Dev Container" option
+3. Point to the project's `.devcontainer/devcontainer.json`
+
+**Other IDEs:**
+1. Use Docker directly with the dev container:
+   ```bash
+   docker build -f .devcontainer/Dockerfile -t safaribooks-dev .
+   docker run -it -v "$(pwd):/workspaces/safaribooks" safaribooks-dev
+   ```
+
+The dev container includes:
+- .NET 9 SDK
+- All required extensions and tools
+- Automatic project restoration
+
+### Project Structure
+```
+src/
+└── SafariBooksDownloader/
+    ├── SafariBooksDownloader.csproj
+    ├── Program.cs                    # Main application entry
+    ├── Services/
+    │   ├── ApiClient.cs             # O'Reilly API client
+    │   ├── HtmlProcessor.cs         # HTML/XHTML processing
+    │   └── EpubBuilder.cs           # EPUB generation
+    └── Utils/
+        └── PathUtils.cs             # File/path utilities
+```
 
 ---
 
-## Authentication Setup
+## Requirements
 
-### Creating cookies.json
-
-1. **Log in to O'Reilly Learning** in your browser
-2. **Open Developer Tools** (F12 or right-click → Inspect)
-3. **Go to the Application/Storage tab**
-4. **Navigate to Cookies** → `https://learning.oreilly.com`
-5. **Copy the relevant cookies** (especially `sessionid`, `csrftoken`)
-6. **Create cookies.json** in the same directory as the executable:
-
-```json
-{
-  "sessionid": "your_session_id_value",
-  "csrftoken": "your_csrf_token_value",
-  "BrowserId": "your_browser_id",
-  "optimizelyEndUserId": "your_optimizely_id"
-}
-```
-
-**Note:** Cookie values and names may vary. Copy all cookies from the `learning.oreilly.com` domain for best compatibility.
+- Docker (for running the application)
+- Valid O'Reilly Learning subscription
+- `cookies.json` file with your session cookies
 
 ---
 
@@ -178,7 +176,9 @@ ebook-convert "input.epub" "output.epub"
 Use the `--kindle` option for better Kindle compatibility:
 
 ```bash
-SafariBooksDownloader --kindle <BOOK_ID>
+docker run -v "$(pwd)/cookies.json:/app/cookies.json" \
+           -v "$(pwd)/Books:/app/Books" \
+           safaribooks-downloader --kindle <BOOK_ID>
 ```
 
 This adds CSS rules that improve rendering of tables and code blocks on Kindle devices.
@@ -186,53 +186,6 @@ This adds CSS rules that improve rendering of tables and code blocks on Kindle d
 To convert for Kindle:
 ```bash
 ebook-convert "input.epub" "output.azw3"
-```
-
----
-
-## Development
-
-### Project Structure
-```
-src/
-└── SafariBooksDownloader/
-    ├── SafariBooksDownloader.csproj
-    ├── Program.cs                    # Main application entry
-    ├── Services/
-    │   ├── ApiClient.cs             # O'Reilly API client
-    │   ├── HtmlProcessor.cs         # HTML/XHTML processing
-    │   └── EpubBuilder.cs           # EPUB generation
-    └── Utils/
-        └── PathUtils.cs             # File/path utilities
-```
-
-### Building from Source
-```bash
-cd src/SafariBooksDownloader
-dotnet build -c Release
-dotnet publish -c Release -o ../../dist
-```
-
----
-
-## Docker Commands
-
-### Build
-```bash
-docker build -t safaribooks-downloader .
-```
-
-### Run
-```bash
-# Basic usage
-docker run -v "$(pwd)/cookies.json:/app/cookies.json" \
-           -v "$(pwd)/Books:/app/Books" \
-           safaribooks-downloader <BOOK_ID>
-
-# With Kindle optimization
-docker run -v "$(pwd)/cookies.json:/app/cookies.json" \
-           -v "$(pwd)/Books:/app/Books" \
-           safaribooks-downloader --kindle <BOOK_ID>
 ```
 
 ---
@@ -285,9 +238,10 @@ This tool is for personal and educational use only. Please:
 ## Contributing
 
 Feel free to open issues or submit pull requests. When contributing:
-1. Follow the existing code style
-2. Add tests for new functionality
-3. Update documentation as needed
+1. Use the dev container environment for consistency
+2. Follow the existing code style
+3. Add tests for new functionality
+4. Update documentation as needed
 
 ---
 
