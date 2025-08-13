@@ -7,16 +7,17 @@
             "extensions": [
                 "ms-dotnettools.csharp",
                 "ms-dotnettools.vscode-dotnet-runtime",
+                "ms-dotnettools.csdevkit",
                 "ms-vscode.vscode-json",
                 "github.vscode-github-actions",
                 "EditorConfig.EditorConfig",
                 "ionutvmi.path-autocomplete"
             ],
             "settings": {
-                "dotnet.defaultSolution": "src/SafariBooksDownloader/SafariBooksDownloader.csproj"
+                "dotnet.defaultSolution": "src/SafariBooksDownloader.sln"
             }
         }
     },
     "forwardPorts": [],
-    "postCreateCommand": "dotnet restore src/SafariBooksDownloader/SafariBooksDownloader.csproj"
+    "postCreateCommand": "dotnet restore src/SafariBooksDownloader.sln"
 }
