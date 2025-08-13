@@ -6,6 +6,26 @@ __pycache__/
 .venv/
 .env/
 
+# .NET artifacts
+bin/
+obj/
+dist/
+*.user
+*.suo
+*.sln.docstates
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+
 Books/
 
 cookies.json

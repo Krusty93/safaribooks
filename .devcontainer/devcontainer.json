@@ -1,0 +1,24 @@
+{
+    "name": "SafariBooks Downloader",
+    "dockerFile": "../Dockerfile",
+    "workspaceFolder": "/app",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-dotnettools.csharp",
+                "ms-dotnettools.vscode-dotnet-runtime",
+                "ms-vscode.vscode-json"
+            ],
+            "settings": {
+                "dotnet.defaultSolution": "src/SafariBooksDownloader/SafariBooksDownloader.csproj"
+            }
+        }
+    },
+    "forwardPorts": [],
+    "postCreateCommand": "dotnet restore src/SafariBooksDownloader/SafariBooksDownloader.csproj",
+    "remoteUser": "root",
+    "mounts": [
+        "source=${localWorkspaceFolder}/Books,target=/app/Books,type=bind,consistency=cached",
+        "source=${localWorkspaceFolder}/cookies.json,target=/app/cookies.json,type=bind,consistency=cached"
+    ]
+}
