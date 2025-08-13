@@ -1,6 +1,0 @@
-{
-  "sessionid": "your_session_id_value_here",
-  "csrftoken": "your_csrf_token_value_here",
-  "BrowserId": "your_browser_id_here",
-  "optimizelyEndUserId": "your_optimizely_id_here"
-}
