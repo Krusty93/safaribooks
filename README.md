@@ -23,7 +23,7 @@ This is a .NET 8 console application that downloads books from O'Reilly Learning
 ## Requirements & Setup
 
 ### Prerequisites
-- .NET 8.0 Runtime or Docker
+- .NET 8.0 Runtime or Docker (compatible with .NET 9.0 when available)
 - Valid O'Reilly Learning subscription
 - `cookies.json` file with your session cookies
 
