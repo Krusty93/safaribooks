@@ -105,8 +105,7 @@ internal sealed class ApiClient(HttpClient http)
     {
         try
         {
-            var req = new HttpRequestMessage(HttpMethod.Get, url);
-            var resp = await http.SendAsync(req, stream ? HttpCompletionOption.ResponseHeadersRead : HttpCompletionOption.ResponseContentRead);
+            var resp = await http.GetAsync(url, stream ? HttpCompletionOption.ResponseHeadersRead : HttpCompletionOption.ResponseContentRead);
             if ((int)resp.StatusCode is >= 300 and < 400 && resp.Headers.Location is not null)
             {
                 var next = resp.Headers.Location.IsAbsoluteUri ? resp.Headers.Location : new Uri(Base, resp.Headers.Location);

@@ -168,7 +168,9 @@ internal static class Program
 
             if (File.Exists(imagePath)) { Display.State(allImages.Count, i + 1); continue; }
 
-            var imgBytes = await client.DownloadBytesAsync(url, joinBase: true);
+            // Handle file:// URLs by extracting just the path part
+            var downloadUrl = url.StartsWith("file://") ? url.Substring(7) : url;
+            var imgBytes = await client.DownloadBytesAsync(downloadUrl, joinBase: true);
             if (imgBytes is null) continue;
 
             await File.WriteAllBytesAsync(imagePath, imgBytes);
@@ -244,7 +246,10 @@ internal static class Program
     {
         var handler = new HttpClientHandler
         {
-            AllowAutoRedirect = false
+            AllowAutoRedirect = false,
+            AutomaticDecompression = System.Net.DecompressionMethods.GZip 
+                                     | System.Net.DecompressionMethods.Deflate 
+                                     | System.Net.DecompressionMethods.Brotli
         };
         var http = new HttpClient(handler)
         {
