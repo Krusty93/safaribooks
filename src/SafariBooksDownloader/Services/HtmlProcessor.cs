@@ -16,6 +16,7 @@ internal sealed class HtmlProcessor(ApiClient client)
     {
         var doc = new HtmlDocument();
         doc.OptionFixNestedTags = true;
+        doc.OptionOutputAsXml = true; // Ensure proper XHTML output with self-closing tags
         doc.LoadHtml(htmlText);
 
         foreach (var link in doc.DocumentNode.SelectNodes("//link[@rel='stylesheet']") ?? Enumerable.Empty<HtmlNode>())
