@@ -15,6 +15,5 @@
         }
     },
     "forwardPorts": [],
-    "postCreateCommand": "dotnet restore src/SafariBooksDownloader/SafariBooksDownloader.csproj",
-    "remoteUser": "vscode"
+    "postCreateCommand": "dotnet restore src/SafariBooksDownloader/SafariBooksDownloader.csproj"
 }
