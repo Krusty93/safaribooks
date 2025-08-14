@@ -34,14 +34,20 @@ internal static class EpubBuilder
             foreach (var imgFile in Directory.GetFiles(imagesDir))
             {
                 var filename = Path.GetFileName(imgFile);
-                var id = PathUtils.CleanId(Path.GetFileNameWithoutExtension(filename));
+                var baseId = PathUtils.CleanId(Path.GetFileNameWithoutExtension(filename));
                 var mediaType = GetImageMediaType(Path.GetExtension(filename));
                 
                 // Check if this is the cover image
                 var fileNameLower = Path.GetFileNameWithoutExtension(filename).ToLowerInvariant();
+                string id;
                 if (coverImageId == null && fileNameLower.Contains("cover"))
                 {
+                    id = "img_cover"; // Use specific ID for cover image to avoid conflicts
                     coverImageId = id;
+                }
+                else
+                {
+                    id = baseId;
                 }
                 
                 manifest.AppendLine($@"<item id=""{id}"" href=""Images/{filename}"" media-type=""{mediaType}""/>");
