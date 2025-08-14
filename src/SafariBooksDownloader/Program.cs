@@ -189,6 +189,7 @@ internal static class Program
 
         // Build OPF and NCX content
         var manifestAndSpine = EpubBuilder.BuildManifestAndSpine(processedChapters, stylesCount: allCss.Count, imagesPath);
+        var coverItemId = manifestAndSpine.CoverImageId ?? "cover-meta"; // Use cover image ID if available, otherwise use a unique ID
         var contentOpf = EpubBuilder.BuildContentOpf(
             id: bookInfo.RootElement.GetPropertyOrDefault("isbn", bookId),
             title: title,
@@ -198,7 +199,7 @@ internal static class Program
             publishers: bookInfo.RootElement.GetArrayStrings("publishers", "name"),
             rights: bookInfo.RootElement.GetPropertyOrDefault("rights", ""),
             issued: bookInfo.RootElement.GetPropertyOrDefault("issued", ""),
-            coverItemId: "cover",
+            coverItemId: coverItemId,
             manifest: manifestAndSpine.Manifest,
             spine: manifestAndSpine.Spine,
             coverHref: processedChapters.First().XhtmlFilename
@@ -216,14 +217,14 @@ internal static class Program
         // Zip into EPUB ensuring mimetype is first and uncompressed
         if (File.Exists(epubPath)) File.Delete(epubPath);
         using (var fs = new FileStream(epubPath, FileMode.CreateNew))
-        using (var zip = new ZipArchive(fs, ZipArchiveMode.Create, leaveOpen: false, entryNameEncoding: Encoding.UTF8))
+        using (var zip = new ZipArchive(fs, ZipArchiveMode.Create, leaveOpen: false))
         {
             // 1. mimetype (must be first, stored without compression)
             var mimetypeEntry = zip.CreateEntry("mimetype", CompressionLevel.NoCompression);
-            await using (var s = mimetypeEntry.Open())
+            using (var s = mimetypeEntry.Open())
             {
                 var bytes = Encoding.ASCII.GetBytes("application/epub+zip");
-                await s.WriteAsync(bytes);
+                s.Write(bytes, 0, bytes.Length);
             }
 
             // 2. META-INF/container.xml

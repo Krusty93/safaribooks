@@ -8,13 +8,14 @@ internal static class EpubBuilder
     public static string ContainerXml => 
         """<?xml version="1.0"?><container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container"><rootfiles><rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml" /></rootfiles></container>""";
 
-    public static (string Manifest, string Spine) BuildManifestAndSpine(
+    public static (string Manifest, string Spine, string? CoverImageId) BuildManifestAndSpine(
         List<ProcessedChapter> chapters,
         int stylesCount,
         string imagesDir)
     {
         var manifest = new StringBuilder();
         var spine = new StringBuilder();
+        string? coverImageId = null;
 
         foreach (var c in chapters)
         {
@@ -35,11 +36,19 @@ internal static class EpubBuilder
                 var filename = Path.GetFileName(imgFile);
                 var id = PathUtils.CleanId(Path.GetFileNameWithoutExtension(filename));
                 var mediaType = GetImageMediaType(Path.GetExtension(filename));
+                
+                // Check if this is the cover image
+                var fileNameLower = Path.GetFileNameWithoutExtension(filename).ToLowerInvariant();
+                if (coverImageId == null && fileNameLower.Contains("cover"))
+                {
+                    coverImageId = id;
+                }
+                
                 manifest.AppendLine($@"<item id=""{id}"" href=""Images/{filename}"" media-type=""{mediaType}""/>");
             }
         }
 
-        return (manifest.ToString(), spine.ToString());
+        return (manifest.ToString(), spine.ToString(), coverImageId);
     }
 
     public static string BuildContentOpf(
@@ -60,8 +69,7 @@ internal static class EpubBuilder
         var subjectsXml = string.Join("\n", subjects.Select(s => $"<dc:subject>{EscapeXml(s)}</dc:subject>"));
         var publishersXml = string.Join(", ", publishers);
 
-        return $@"
-<?xml version=""1.0"" encoding=""utf-8""?>
+        return $@"<?xml version=""1.0"" encoding=""utf-8""?>
 <package xmlns=""http://www.idpf.org/2007/opf"" unique-identifier=""bookid"" version=""2.0"">
 <metadata xmlns:dc=""http://purl.org/dc/elements/1.1/"" xmlns:opf=""http://www.idpf.org/2007/opf"">
 <dc:title>{EscapeXml(title)}</dc:title>
@@ -92,8 +100,7 @@ internal static class EpubBuilder
     {
         var authorsList = string.Join(", ", authors);
 
-        return $@"
-<?xml version=""1.0"" encoding=""utf-8"" standalone=""no""?>
+        return $@"<?xml version=""1.0"" encoding=""utf-8"" standalone=""no""?>
 <!DOCTYPE ncx PUBLIC ""-//NISO//DTD ncx 2005-1//EN"" ""http://www.daisy.org/z3986/2005/ncx-2005-1.dtd"">
 <ncx xmlns=""http://www.daisy.org/z3986/2005/ncx/"" version=""2005-1"">
 <head>
