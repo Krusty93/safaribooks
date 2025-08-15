@@ -2,14 +2,11 @@
 
 *This project is a .NET 9 rewrite of the original [SafariBooks downloader](https://github.com/lorenzodifuccia/safaribooks) by [lorenzodifuccia](https://github.com/lorenzodifuccia). All credits for the original concept and implementation go to the original author.*
 
-Download and generate *EPUB* of your favorite books from [*O'Reilly Learning*](https://learning.oreilly.com) library using cookie-based authentication.
-
-I'm not responsible for the use of this program, this is only for *personal* and *educational* purpose.  
-Before any usage please read the *O'Reilly*'s [Terms of Service](https://learning.oreilly.com/terms/).
+*This project was ported using GitHub Copilot in order to test its features and development flows. Given the educational purposes of this program, I am not responsible for its use. Before any usage please read the *O'Reilly*'s [Terms of Service](https://learning.oreilly.com/terms/).*
 
 ## Overview
 
-This is a .NET 9 console application that downloads books from O'Reilly Learning (Safari Books Online) and converts them to EPUB format using cookie-based authentication.
+Download and generate *EPUB* of your favorite books from [*O'Reilly Learning*](https://learning.oreilly.com) library (Kindle-compatible).
 
 **Features:**
 - Cookie-based authentication (no login credentials required in the app)
