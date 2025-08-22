@@ -117,16 +117,47 @@ The dev container includes:
 ### Project Structure
 ```
 src/
-└── SafariBooksDownloader/
-    ├── SafariBooksDownloader.csproj
-    ├── Program.cs                    # Main application entry
-    ├── Services/
-    │   ├── ApiClient.cs             # O'Reilly API client
-    │   ├── HtmlProcessor.cs         # HTML/XHTML processing
-    │   └── EpubBuilder.cs           # EPUB generation
+├── SafariBooksDownloader/
+│   ├── SafariBooksDownloader.csproj
+│   ├── Program.cs                    # Main application entry
+│   ├── Services/
+│   │   ├── ApiClient.cs             # O'Reilly API client
+│   │   ├── HtmlProcessor.cs         # HTML/XHTML processing
+│   │   └── EpubBuilder.cs           # EPUB generation
+│   └── Utils/
+│       └── PathUtils.cs             # File/path utilities
+└── SafariBooksDownloader.UnitTests/
+    ├── SafariBooksDownloader.UnitTests.csproj
+    ├── Services/                     # Unit tests for business logic
+    │   ├── EpubBuilderTests.cs      # Tests for EPUB generation
+    │   ├── JsonUtilTests.cs         # Tests for JSON utilities
+    │   └── JsonExtensionsTests.cs   # Tests for JSON extensions
     └── Utils/
-        └── PathUtils.cs             # File/path utilities
+        └── PathUtilsTests.cs        # Tests for path utilities
 ```
+
+### Running Tests
+
+To run the unit tests during development:
+
+```bash
+# Run all tests
+dotnet test src/SafariBooksDownloader.sln
+
+# Run tests with detailed output
+dotnet test src/SafariBooksDownloader.sln --verbosity normal
+
+# Run only unit tests project
+dotnet test src/SafariBooksDownloader.UnitTests/SafariBooksDownloader.UnitTests.csproj
+```
+
+The test suite includes comprehensive unit tests for:
+- **PathUtils**: File name and XML ID sanitization logic
+- **EpubBuilder**: EPUB file structure generation (OPF, NCX, manifest)
+- **JsonUtil**: JSON parsing and property extraction utilities
+- **JsonExtensions**: Additional JSON processing extension methods
+
+Tests are automatically excluded from Docker builds to keep the production image minimal.
 
 ---
 
