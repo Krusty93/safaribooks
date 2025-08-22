@@ -122,10 +122,14 @@ The dev container includes:
 ### Project Structure
 ```
 src/
-├── SafariBooksDownloader/
-│   └── SafariBooksDownloader.csproj
-└── SafariBooksDownloader.UnitTests/
-    └── SafariBooksDownloader.UnitTests.csproj
+├── SafariBooksDownloader.Core/
+│   └── SafariBooksDownloader.Core.csproj
+├── SafariBooksDownloader.App/
+│   ├── SafariBooksDownloader.App.csproj
+├── SafariBooksDownloader.UnitTests/
+│   └── SafariBooksDownloader.UnitTests.csproj
+└── Directory.props.builds               # Common project properties
+SafariBooksDownloader.slnx               # Solution file
 ```
 
 ### Running Tests

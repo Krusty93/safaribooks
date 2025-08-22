@@ -6,15 +6,17 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/SafariBooksDownloader/SafariBooksDownloader.csproj", "src/SafariBooksDownloader/"]
-RUN dotnet restore "src/SafariBooksDownloader/SafariBooksDownloader.csproj"
+COPY ["src/SafariBooksDownloader.App/SafariBooksDownloader.App.csproj", "src/SafariBooksDownloader.App/"]
+COPY ["src/SafariBooksDownloader.Core/SafariBooksDownloader.Core.csproj", "src/SafariBooksDownloader.Core/"]
+COPY ["src/Directory.props.builds", "src/"]
+RUN dotnet restore "src/SafariBooksDownloader.App/SafariBooksDownloader.App.csproj"
 COPY . .
-WORKDIR "/src/src/SafariBooksDownloader"
-RUN dotnet build "SafariBooksDownloader.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/src/SafariBooksDownloader.App"
+RUN dotnet build "SafariBooksDownloader.App.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "SafariBooksDownloader.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "SafariBooksDownloader.App.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
