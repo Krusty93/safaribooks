@@ -26,6 +26,10 @@ bld/
 [Oo]bj/
 [Ll]og/
 
+# Code coverage files
+coverage.cobertura.xml
+TestResults/
+
 Books/
 
 cookies.json
