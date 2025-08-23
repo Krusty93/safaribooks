@@ -1,9 +1,7 @@
-name: CI
+name: (PR) SafariBooks Validation
 
 on:
   pull_request:
-    branches: [ main ]
-  push:
     branches: [ main ]
 
 jobs:

@@ -118,22 +118,9 @@ The dev container includes:
 ```
 src/
 ├── SafariBooksDownloader/
-│   ├── SafariBooksDownloader.csproj
-│   ├── Program.cs                    # Main application entry
-│   ├── Services/
-│   │   ├── ApiClient.cs             # O'Reilly API client
-│   │   ├── HtmlProcessor.cs         # HTML/XHTML processing
-│   │   └── EpubBuilder.cs           # EPUB generation
-│   └── Utils/
-│       └── PathUtils.cs             # File/path utilities
+│   └── SafariBooksDownloader.csproj
 └── SafariBooksDownloader.UnitTests/
-    ├── SafariBooksDownloader.UnitTests.csproj
-    ├── Services/                     # Unit tests for business logic
-    │   ├── EpubBuilderTests.cs      # Tests for EPUB generation
-    │   ├── JsonUtilTests.cs         # Tests for JSON utilities
-    │   └── JsonExtensionsTests.cs   # Tests for JSON extensions
-    └── Utils/
-        └── PathUtilsTests.cs        # Tests for path utilities
+    └── SafariBooksDownloader.UnitTests.csproj
 ```
 
 ### Running Tests
