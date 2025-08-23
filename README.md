@@ -120,17 +120,24 @@ The dev container includes:
 - Automatic project restoration
 
 ### Project Structure
+
+The project is organized into separate libraries for better maintainability and reusability:
+
 ```
 src/
 ├── SafariBooksDownloader.Core/
 │   └── SafariBooksDownloader.Core.csproj
 ├── SafariBooksDownloader.App/
-│   ├── SafariBooksDownloader.App.csproj
-├── SafariBooksDownloader.UnitTests/
-│   └── SafariBooksDownloader.UnitTests.csproj
-└── Directory.props.builds               # Common project properties
-SafariBooksDownloader.slnx               # Solution file
+│   └── SafariBooksDownloader.App.csproj
+└── SafariBooksDownloader.UnitTests/     # Comprehensive test suite
+    └── SafariBooksDownloader.UnitTests.csproj
 ```
+
+**Benefits of this structure:**
+- **Reusability**: The Core library can be referenced in web apps, desktop apps, or other console tools
+- **Testability**: Business logic is isolated and easier to unit test
+- **Maintainability**: Clear separation of concerns between UI and business logic
+- **Modularity**: Each project has a single, well-defined responsibility
 
 ### Running Tests
 
@@ -138,22 +145,28 @@ To run the unit tests during development:
 
 ```bash
 # Run all tests
-dotnet test src/SafariBooksDownloader.sln
+dotnet test SafariBooksDownloader.slnx
 
 # Run tests with detailed output
-dotnet test src/SafariBooksDownloader.sln --verbosity normal
+dotnet test SafariBooksDownloader.slnx --verbosity normal
 
 # Run only unit tests project
 dotnet test src/SafariBooksDownloader.UnitTests/SafariBooksDownloader.UnitTests.csproj
 ```
 
-The test suite includes comprehensive unit tests for:
-- **PathUtils**: File name and XML ID sanitization logic
-- **EpubBuilder**: EPUB file structure generation (OPF, NCX, manifest)
-- **JsonUtil**: JSON parsing and property extraction utilities
-- **JsonExtensions**: Additional JSON processing extension methods
+#### Running Tests with Docker
 
-Tests are automatically excluded from Docker builds to keep the production image minimal.
+To run tests in a Docker container with code coverage:
+
+```bash
+# Build the test image
+docker build -f Dockerfile.test -t safaribooks-tests .
+
+# Run tests and collect coverage (mount volume to access coverage files)
+docker run --rm -v "$(pwd)/coverage:/app/TestResults" safaribooks-tests
+
+# Coverage files will be available in the ./coverage directory
+```
 
 ---
 

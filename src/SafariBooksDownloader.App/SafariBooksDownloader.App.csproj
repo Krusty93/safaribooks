@@ -4,19 +4,13 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <AssemblyName>SafariBooksDownloader</AssemblyName>
     <RootNamespace>SafariBooksDownloader.App</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SafariBooksDownloader.Core\SafariBooksDownloader.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="cookies.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
   <ItemGroup>

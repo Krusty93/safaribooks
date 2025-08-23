@@ -7,5 +7,6 @@
   <Folder Name="/src/">
     <Project Path="src/SafariBooksDownloader.App/SafariBooksDownloader.App.csproj" />
     <Project Path="src/SafariBooksDownloader.Core/SafariBooksDownloader.Core.csproj" />
+    <Project Path="src/SafariBooksDownloader.UnitTests/SafariBooksDownloader.UnitTests.csproj" />
   </Folder>
 </Solution>

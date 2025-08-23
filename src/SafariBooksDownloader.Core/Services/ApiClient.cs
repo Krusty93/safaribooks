@@ -124,6 +124,29 @@ public static class JsonUtil
 {
     public static string GetPropertyOrDefault(this JsonElement el, string name, string defaultValue)
         => el.TryGetProperty(name, out var v) && v.ValueKind != JsonValueKind.Null ? v.ToString() : defaultValue;
+
+    public static string GetStringOrEmpty(this JsonElement el, string name)
+        => el.TryGetProperty(name, out var v) && v.ValueKind != JsonValueKind.Null ? v.ToString() : string.Empty;
+
+    public static string[] GetArrayStrings(this JsonElement el, string arrayName, string propertyName)
+    {
+        if (!el.TryGetProperty(arrayName, out var array) || array.ValueKind != JsonValueKind.Array)
+            return Array.Empty<string>();
+
+        var result = new List<string>();
+        foreach (var item in array.EnumerateArray())
+        {
+            if (item.ValueKind == JsonValueKind.Object &&
+                item.TryGetProperty(propertyName, out var prop) &&
+                prop.ValueKind != JsonValueKind.Null)
+            {
+                var value = prop.ToString();
+                if (!string.IsNullOrEmpty(value))
+                    result.Add(value);
+            }
+        }
+        return result.ToArray();
+    }
 }
 
 public sealed class Chapter
