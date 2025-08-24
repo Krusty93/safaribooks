@@ -56,7 +56,7 @@ The Book ID would be: `9781491958698`
 ```bash
 # Option 1: Use pre-built image from GitHub Container Registry (recommended)
 docker run -v "$(pwd)/cookies.json:/app/cookies.json" \
-           -v "$(pwd)/Books:/app/Books" \
+           -v "$(pwd)/Books:/Books" \
            ghcr.io/krusty93/safaribooks:latest <BOOK_ID>
 
 # Option 2: Build the Docker image locally
@@ -64,20 +64,14 @@ docker build -t safaribooks-downloader .
 
 # Download a book
 docker run -v "$(pwd)/cookies.json:/app/cookies.json" \
-           -v "$(pwd)/Books:/app/Books" \
+           -v "$(pwd)/Books:/Books" \
            safaribooks-downloader <BOOK_ID>
 
 # With Kindle optimization
 docker run -v "$(pwd)/cookies.json:/app/cookies.json" \
-           -v "$(pwd)/Books:/app/Books" \
+           -v "$(pwd)/Books:/Books" \
            ghcr.io/krusty93/safaribooks:latest --kindle <BOOK_ID>
 ```
-
-**Available Docker Images:**
-- `ghcr.io/krusty93/safaribooks:latest` - Latest build from main branch
-- `ghcr.io/krusty93/safaribooks:v1.0.0` - Specific release version (when available)
-- `ghcr.io/krusty93/safaribooks:1.0` - Major.minor version tag (when available)
-- `ghcr.io/krusty93/safaribooks:1` - Major version tag (when available)
 
 ### Command Options
 ```bash
