@@ -8,7 +8,7 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["src/SafariBooksDownloader.App/SafariBooksDownloader.App.csproj", "src/SafariBooksDownloader.App/"]
 COPY ["src/SafariBooksDownloader.Core/SafariBooksDownloader.Core.csproj", "src/SafariBooksDownloader.Core/"]
-COPY ["src/Directory.props.builds", "src/"]
+COPY ["Directory.Build.props", "./"]
 RUN dotnet restore "src/SafariBooksDownloader.App/SafariBooksDownloader.App.csproj"
 COPY . .
 WORKDIR "/src/src/SafariBooksDownloader.App"

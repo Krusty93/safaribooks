@@ -6,14 +6,13 @@ WORKDIR /app
 
 # Copy project files
 COPY src/ ./src/
-COPY SafariBooksDownloader.slnx ./
 COPY Directory.Build.props ./
 
 # Restore dependencies
-RUN dotnet restore SafariBooksDownloader.slnx
+RUN dotnet restore src/SafariBooksDownloader.slnx
 
 # Build the solution
-RUN dotnet build SafariBooksDownloader.slnx --configuration Release --no-restore
+RUN dotnet build src/SafariBooksDownloader.slnx --configuration Release --no-restore
 
 # Run tests with coverage
-CMD ["dotnet", "test", "SafariBooksDownloader.slnx", "--configuration", "Release", "--no-build", "--verbosity", "normal", "--collect", "XPlat Code Coverage"]
+CMD ["dotnet", "test", "src/SafariBooksDownloader.slnx", "--configuration", "Release", "--no-build", "--verbosity", "normal", "--collect", "XPlat Code Coverage"]

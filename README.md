@@ -129,11 +129,13 @@ src/
 │   └── SafariBooksDownloader.Core.csproj
 ├── SafariBooksDownloader.App/
 │   └── SafariBooksDownloader.App.csproj
-└── SafariBooksDownloader.UnitTests/     # Comprehensive test suite
-    └── SafariBooksDownloader.UnitTests.csproj
+├── SafariBooksDownloader.UnitTests/
+│   └── SafariBooksDownloader.UnitTests.csproj
+SafariBooksDownloader.slnx
 ```
 
 **Benefits of this structure:**
+
 - **Reusability**: The Core library can be referenced in web apps, desktop apps, or other console tools
 - **Testability**: Business logic is isolated and easier to unit test
 - **Maintainability**: Clear separation of concerns between UI and business logic
