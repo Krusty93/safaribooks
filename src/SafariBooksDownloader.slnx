@@ -4,9 +4,9 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Folder Name="/src/">
-    <Project Path="src/SafariBooksDownloader.App/SafariBooksDownloader.App.csproj" />
-    <Project Path="src/SafariBooksDownloader.Core/SafariBooksDownloader.Core.csproj" />
-    <Project Path="src/SafariBooksDownloader.UnitTests/SafariBooksDownloader.UnitTests.csproj" />
+  <Folder Name="/">
+    <Project Path="SafariBooksDownloader.App/SafariBooksDownloader.App.csproj" />
+    <Project Path="SafariBooksDownloader.Core/SafariBooksDownloader.Core.csproj" />
+    <Project Path="SafariBooksDownloader.UnitTests/SafariBooksDownloader.UnitTests.csproj" />
   </Folder>
 </Solution>
