@@ -1,5 +1,5 @@
 # Test Dockerfile for SafariBooks Downloader
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS test
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS test
 
 # Set working directory
 WORKDIR /app
