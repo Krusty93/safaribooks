@@ -12,26 +12,39 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build Docker image
+      id: build
+      uses: docker/build-push-action@v5
       with:
-        dotnet-version: '9.0.x'
-        
-    - name: Restore dependencies
-      run: dotnet restore src/SafariBooksDownloader.sln
+        context: .
+        platforms: linux/amd64
+        file: Dockerfile.test
+        push: false
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        tags: safari-test:latest
+        load: true
       
-    - name: Build
-      run: dotnet build src/SafariBooksDownloader.sln --configuration Release --no-restore
-      
-    - name: Test
-      run: dotnet test src/SafariBooksDownloader.sln --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage"
-      
+    - name: Run tests in container
+      run: |
+        docker run --name safari-test-run safari-test || true
+        docker cp safari-test-run:/src/SafariBooksDownloader.UnitTests/TestResults ./TestResults
+        docker rm safari-test-run
+
+    - name: Find coverage file
+      id: find_coverage
+      run: |
+        echo "file=$(find ./TestResults -name 'coverage.cobertura.xml' | head -n 1)" >> $GITHUB_OUTPUT
+
     - name: Upload coverage reports
       uses: codecov/codecov-action@v3
       if: always()
       with:
-        file: "**/coverage.cobertura.xml"
+        file: ${{ steps.find_coverage.outputs.file }}
         flags: unittests
         name: codecov-umbrella
         fail_ci_if_error: false
