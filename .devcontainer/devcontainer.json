@@ -14,10 +14,10 @@
                 "ionutvmi.path-autocomplete"
             ],
             "settings": {
-                "dotnet.defaultSolution": "src/SafariBooksDownloader.sln"
+                "dotnet.defaultSolution": "src/SafariBooksDownloader.slnx"
             }
         }
     },
     "forwardPorts": [],
-    "postCreateCommand": "dotnet restore src/SafariBooksDownloader.sln"
+    "postCreateCommand": "dotnet restore src/SafariBooksDownloader.slnx"
 }

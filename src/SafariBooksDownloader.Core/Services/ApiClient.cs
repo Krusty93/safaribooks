@@ -1,8 +1,8 @@
 using System.Text.Json;
 
-namespace SafariBooksDownloader.Services;
+namespace SafariBooksDownloader.Core.Services;
 
-internal sealed class ApiClient(HttpClient http)
+public sealed class ApiClient(HttpClient http)
 {
     private static readonly Uri Base = new("https://learning.oreilly.com");
 
@@ -120,13 +120,36 @@ internal sealed class ApiClient(HttpClient http)
     }
 }
 
-internal static class JsonUtil
+public static class JsonUtil
 {
     public static string GetPropertyOrDefault(this JsonElement el, string name, string defaultValue)
         => el.TryGetProperty(name, out var v) && v.ValueKind != JsonValueKind.Null ? v.ToString() : defaultValue;
+
+    public static string GetStringOrEmpty(this JsonElement el, string name)
+        => el.TryGetProperty(name, out var v) && v.ValueKind != JsonValueKind.Null ? v.ToString() : string.Empty;
+
+    public static string[] GetArrayStrings(this JsonElement el, string arrayName, string propertyName)
+    {
+        if (!el.TryGetProperty(arrayName, out var array) || array.ValueKind != JsonValueKind.Array)
+            return Array.Empty<string>();
+
+        var result = new List<string>();
+        foreach (var item in array.EnumerateArray())
+        {
+            if (item.ValueKind == JsonValueKind.Object &&
+                item.TryGetProperty(propertyName, out var prop) &&
+                prop.ValueKind != JsonValueKind.Null)
+            {
+                var value = prop.ToString();
+                if (!string.IsNullOrEmpty(value))
+                    result.Add(value);
+            }
+        }
+        return result.ToArray();
+    }
 }
 
-internal sealed class Chapter
+public sealed class Chapter
 {
     public string Filename { get; set; } = "chapter.xhtml";
     public string Title { get; set; } = "Chapter";
@@ -136,7 +159,7 @@ internal sealed class Chapter
     public List<string> Images { get; set; } = new();
 }
 
-internal sealed class ProcessedChapter
+public sealed class ProcessedChapter
 {
     public Chapter Chapter { get; set; } = new();
     public string XhtmlFilename { get; set; } = "";

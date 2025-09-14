@@ -1,4 +1,4 @@
-using SafariBooksDownloader.Utils;
+using SafariBooksDownloader.Core.Utils;
 
 namespace SafariBooksDownloader.UnitTests.Utils;
 

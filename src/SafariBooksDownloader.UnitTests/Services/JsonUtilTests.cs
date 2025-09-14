@@ -1,5 +1,5 @@
 using System.Text.Json;
-using SafariBooksDownloader.Services;
+using SafariBooksDownloader.Core.Services;
 
 namespace SafariBooksDownloader.UnitTests.Services;
 

@@ -1,9 +1,9 @@
 using HtmlAgilityPack;
-using SafariBooksDownloader.Utils;
+using SafariBooksDownloader.Core.Utils;
 
-namespace SafariBooksDownloader.Services;
+namespace SafariBooksDownloader.Core.Services;
 
-internal sealed class HtmlProcessor(ApiClient client)
+public sealed class HtmlProcessor(ApiClient client)
 {
     public (string InlineCss, string BodyXhtml) ParseChapterHtml(
         string htmlText,

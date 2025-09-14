@@ -1,9 +1,9 @@
 using System.Text;
-using SafariBooksDownloader.Utils;
+using SafariBooksDownloader.Core.Utils;
 
-namespace SafariBooksDownloader.Services;
+namespace SafariBooksDownloader.Core.Services;
 
-internal static class EpubBuilder
+public static class EpubBuilder
 {
     public static string ContainerXml => 
         """<?xml version="1.0"?><container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container"><rootfiles><rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml" /></rootfiles></container>""";

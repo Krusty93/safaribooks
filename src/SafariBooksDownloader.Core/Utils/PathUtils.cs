@@ -1,8 +1,8 @@
 using System.Text.RegularExpressions;
 
-namespace SafariBooksDownloader.Utils;
+namespace SafariBooksDownloader.Core.Utils;
 
-internal static class PathUtils
+public static class PathUtils
 {
     private static readonly char[] InvalidFileNameChars = Path.GetInvalidFileNameChars();
     private static readonly char[] InvalidPathChars = Path.GetInvalidPathChars();

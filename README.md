@@ -4,6 +4,8 @@
 
 *This project was ported using GitHub Copilot in order to test its features and development flows. Given the educational purposes of this program, I am not responsible for its use. Before any usage please read the *O'Reilly*'s [Terms of Service](https://learning.oreilly.com/terms/).*
 
+<a href="https://www.buymeacoffee.com/krusty93" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
 ## Overview
 
 Download and generate *EPUB* of your favorite books from [*O'Reilly Learning*](https://learning.oreilly.com) library (Kindle-compatible).
@@ -23,21 +25,12 @@ Download and generate *EPUB* of your favorite books from [*O'Reilly Learning*](h
 
 The application uses cookie-based authentication, which is simpler and more secure than credential handling:
 
+1. **Create cookies.json** file
 1. **Log in to O'Reilly Learning** in your browser at [learning.oreilly.com](https://learning.oreilly.com)
 2. **Open Developer Tools** (F12 or right-click → Inspect)
 3. **Go to the Application/Storage tab**
 4. **Navigate to Cookies** → `https://learning.oreilly.com`
-5. **Copy the relevant cookies** (especially `sessionid`, `csrftoken`)
-6. **Create cookies.json** file with the following format:
-
-```json
-{
-  "sessionid": "your_session_id_value",
-  "csrftoken": "your_csrf_token_value",
-  "BrowserId": "your_browser_id",
-  "optimizelyEndUserId": "your_optimizely_id"
-}
-```
+5. **Copy the relevant cookies** (especially `groot_sessionid`)
 
 **Note:** Cookie values and names may vary. Copy all cookies from the `learning.oreilly.com` domain for best compatibility.
 
@@ -55,22 +48,23 @@ The Book ID would be: `9781491958698`
 
 ```bash
 # Option 1: Use pre-built image from GitHub Container Registry (recommended)
+# Option 1a: Without Kindle optimization 
 docker run -v "$(pwd)/cookies.json:/app/cookies.json" \
-           -v "$(pwd)/Books:/Books" \
+           -v "$(pwd)/Books:/app/Books" \
            ghcr.io/krusty93/safaribooks:latest <BOOK_ID>
+
+# Option 1b: With Kindle optimization
+docker run -v "$(pwd)/cookies.json:/app/cookies.json" \
+           -v "$(pwd)/Books:/app/Books" \
+           ghcr.io/krusty93/safaribooks:latest --kindle <BOOK_ID>
 
 # Option 2: Build the Docker image locally
 docker build -t safaribooks-downloader .
 
 # Download a book
 docker run -v "$(pwd)/cookies.json:/app/cookies.json" \
-           -v "$(pwd)/Books:/Books" \
+           -v "$(pwd)/Books:/app/Books" \
            safaribooks-downloader <BOOK_ID>
-
-# With Kindle optimization
-docker run -v "$(pwd)/cookies.json:/app/cookies.json" \
-           -v "$(pwd)/Books:/Books" \
-           ghcr.io/krusty93/safaribooks:latest --kindle <BOOK_ID>
 ```
 
 ### Command Options
@@ -120,13 +114,26 @@ The dev container includes:
 - Automatic project restoration
 
 ### Project Structure
+
+The project is organized into separate libraries for better maintainability and reusability:
+
 ```
 src/
-├── SafariBooksDownloader/
-│   └── SafariBooksDownloader.csproj
-└── SafariBooksDownloader.UnitTests/
-    └── SafariBooksDownloader.UnitTests.csproj
+├── SafariBooksDownloader.Core/
+│   └── SafariBooksDownloader.Core.csproj
+├── SafariBooksDownloader.App/
+│   └── SafariBooksDownloader.App.csproj
+├── SafariBooksDownloader.UnitTests/
+│   └── SafariBooksDownloader.UnitTests.csproj
+SafariBooksDownloader.slnx
 ```
+
+**Benefits of this structure:**
+
+- **Reusability**: The Core library can be referenced in web apps, desktop apps, or other console tools
+- **Testability**: Business logic is isolated and easier to unit test
+- **Maintainability**: Clear separation of concerns between UI and business logic
+- **Modularity**: Each project has a single, well-defined responsibility
 
 ### Running Tests
 
@@ -134,22 +141,28 @@ To run the unit tests during development:
 
 ```bash
 # Run all tests
-dotnet test src/SafariBooksDownloader.sln
+dotnet test SafariBooksDownloader.slnx
 
 # Run tests with detailed output
-dotnet test src/SafariBooksDownloader.sln --verbosity normal
+dotnet test SafariBooksDownloader.slnx --verbosity normal
 
 # Run only unit tests project
 dotnet test src/SafariBooksDownloader.UnitTests/SafariBooksDownloader.UnitTests.csproj
 ```
 
-The test suite includes comprehensive unit tests for:
-- **PathUtils**: File name and XML ID sanitization logic
-- **EpubBuilder**: EPUB file structure generation (OPF, NCX, manifest)
-- **JsonUtil**: JSON parsing and property extraction utilities
-- **JsonExtensions**: Additional JSON processing extension methods
+#### Running Tests with Docker
 
-Tests are automatically excluded from Docker builds to keep the production image minimal.
+To run tests in a Docker container with code coverage:
+
+```bash
+# Build the test image
+docker build -f Dockerfile.test -t safaribooks-tests .
+
+# Run tests and collect coverage (mount volume to access coverage files)
+docker run --rm -v "$(pwd)/coverage:/app/TestResults" safaribooks-tests
+
+# Coverage files will be available in the ./coverage directory
+```
 
 ---
 

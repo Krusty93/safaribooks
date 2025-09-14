@@ -1,5 +1,6 @@
-using SafariBooksDownloader.Services;
+using SafariBooksDownloader.Core.Services;
 using System.Text.Json;
+using System.Collections.Generic;
 
 namespace SafariBooksDownloader.UnitTests.Services;
 

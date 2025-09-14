@@ -1,0 +1,15 @@
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS test
+
+WORKDIR /src
+
+COPY --link ./src/Directory.Build.props .
+
+COPY src/ ./
+
+RUN dotnet restore SafariBooksDownloader.slnx
+
+RUN dotnet build "SafariBooksDownloader.slnx" \
+  --configuration Release \
+  --no-restore
+
+CMD ["dotnet", "test", "SafariBooksDownloader.slnx", "--configuration", "Release", "--no-build", "--verbosity", "normal", "--collect", "XPlat Code Coverage"]

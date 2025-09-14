@@ -1,0 +1,51 @@
+name: (PR) SafariBooks Validation
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build Docker image
+      id: build
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        platforms: linux/amd64
+        file: Dockerfile.test
+        push: false
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        tags: safari-test:latest
+        load: true
+      
+    - name: Run tests in container
+      run: |
+        docker run --name safari-test-run safari-test || true
+        docker cp safari-test-run:/src/SafariBooksDownloader.UnitTests/TestResults ./TestResults
+        docker rm safari-test-run
+
+    - name: Find coverage file
+      id: find_coverage
+      run: |
+        echo "file=$(find ./TestResults -name 'coverage.cobertura.xml' | head -n 1)" >> $GITHUB_OUTPUT
+
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v3
+      if: always()
+      with:
+        file: ${{ steps.find_coverage.outputs.file }}
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+        token: ${{ secrets.CODECOV_TOKEN }}
