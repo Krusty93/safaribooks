@@ -4,6 +4,8 @@
 
 *This project was ported using GitHub Copilot in order to test its features and development flows. Given the educational purposes of this program, I am not responsible for its use. Before any usage please read the *O'Reilly*'s [Terms of Service](https://learning.oreilly.com/terms/).*
 
+<a href="https://www.buymeacoffee.com/krusty93" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
 ## Overview
 
 Download and generate *EPUB* of your favorite books from [*O'Reilly Learning*](https://learning.oreilly.com) library (Kindle-compatible).
