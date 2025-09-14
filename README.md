@@ -23,21 +23,12 @@ Download and generate *EPUB* of your favorite books from [*O'Reilly Learning*](h
 
 The application uses cookie-based authentication, which is simpler and more secure than credential handling:
 
+1. **Create cookies.json** file
 1. **Log in to O'Reilly Learning** in your browser at [learning.oreilly.com](https://learning.oreilly.com)
 2. **Open Developer Tools** (F12 or right-click → Inspect)
 3. **Go to the Application/Storage tab**
 4. **Navigate to Cookies** → `https://learning.oreilly.com`
-5. **Copy the relevant cookies** (especially `sessionid`, `csrftoken`)
-6. **Create cookies.json** file with the following format:
-
-```json
-{
-  "sessionid": "your_session_id_value",
-  "csrftoken": "your_csrf_token_value",
-  "BrowserId": "your_browser_id",
-  "optimizelyEndUserId": "your_optimizely_id"
-}
-```
+5. **Copy the relevant cookies** (especially `groot_sessionid`)
 
 **Note:** Cookie values and names may vary. Copy all cookies from the `learning.oreilly.com` domain for best compatibility.
 
@@ -55,22 +46,23 @@ The Book ID would be: `9781491958698`
 
 ```bash
 # Option 1: Use pre-built image from GitHub Container Registry (recommended)
+# Option 1a: Without Kindle optimization 
 docker run -v "$(pwd)/cookies.json:/app/cookies.json" \
-           -v "$(pwd)/Books:/Books" \
+           -v "$(pwd)/Books:/app/Books" \
            ghcr.io/krusty93/safaribooks:latest <BOOK_ID>
+
+# Option 1b: With Kindle optimization
+docker run -v "$(pwd)/cookies.json:/app/cookies.json" \
+           -v "$(pwd)/Books:/app/Books" \
+           ghcr.io/krusty93/safaribooks:latest --kindle <BOOK_ID>
 
 # Option 2: Build the Docker image locally
 docker build -t safaribooks-downloader .
 
 # Download a book
 docker run -v "$(pwd)/cookies.json:/app/cookies.json" \
-           -v "$(pwd)/Books:/Books" \
+           -v "$(pwd)/Books:/app/Books" \
            safaribooks-downloader <BOOK_ID>
-
-# With Kindle optimization
-docker run -v "$(pwd)/cookies.json:/app/cookies.json" \
-           -v "$(pwd)/Books:/Books" \
-           ghcr.io/krusty93/safaribooks:latest --kindle <BOOK_ID>
 ```
 
 ### Command Options

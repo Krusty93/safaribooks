@@ -33,6 +33,6 @@ WORKDIR /app
 
 COPY --from=publish /app/publish .
 
-VOLUME ["/app/Books", "/app/cookies.json"]
+VOLUME ["/Books", "/cookies.json"]
 
-ENTRYPOINT ["dotnet", "SafariBooksDownloader.dll"]
+ENTRYPOINT ["dotnet", "SafariBooksDownloader.App.dll"]
