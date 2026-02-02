@@ -1,6 +1,6 @@
 # SafariBooks .NET Downloader
 
-*This project is a .NET 9 rewrite of the original [SafariBooks downloader](https://github.com/lorenzodifuccia/safaribooks) by [lorenzodifuccia](https://github.com/lorenzodifuccia). All credits for the original concept and implementation go to the original author.*
+*This project is a .NET 10 rewrite of the original [SafariBooks downloader](https://github.com/lorenzodifuccia/safaribooks) by [lorenzodifuccia](https://github.com/lorenzodifuccia). All credits for the original concept and implementation go to the original author.*
 
 *This project was ported using GitHub Copilot in order to test its features and development flows. Given the educational purposes of this program, I am not responsible for its use. Before any usage please read the *O'Reilly*'s [Terms of Service](https://learning.oreilly.com/terms/).*
 
@@ -90,26 +90,31 @@ optional arguments:
 The project includes a complete development environment configuration that works with any IDE supporting dev containers:
 
 **Visual Studio Code:**
+
 1. Install the "Dev Containers" extension
 2. Open the project folder
 3. Open Command Palette (`Ctrl+Shift+P`)
 4. Select "Dev Containers: Reopen in Container"
-5. The environment will be automatically configured with .NET 9 SDK
+5. The environment will be automatically configured with .NET 10 SDK
 
 **JetBrains Rider/IntelliJ:**
+
 1. Use the "Remote Development" feature
 2. Select "Dev Container" option
 3. Point to the project's `.devcontainer/devcontainer.json`
 
 **Other IDEs:**
+
 1. Use Docker directly with the dev container:
+
    ```bash
    docker build -f .devcontainer/Dockerfile -t safaribooks-dev .
    docker run -it -v "$(pwd):/workspaces/safaribooks" safaribooks-dev
    ```
 
 The dev container includes:
-- .NET 9 SDK
+
+- .NET 10 SDK
 - All required extensions and tools
 - Automatic project restoration
 
@@ -117,7 +122,7 @@ The dev container includes:
 
 The project is organized into separate libraries for better maintainability and reusability:
 
-```
+```tree
 src/
 ├── SafariBooksDownloader.Core/
 │   └── SafariBooksDownloader.Core.csproj
@@ -178,7 +183,7 @@ docker run --rm -v "$(pwd)/coverage:/app/TestResults" safaribooks-tests
 
 The application creates the following structure:
 
-```
+```tree
 Books/
 └── Book Title (BOOK_ID)/
     ├── BOOK_ID.epub           # Final EPUB file
@@ -199,6 +204,7 @@ Books/
 The generated EPUB files are compatible with most e-readers. For optimal compatibility:
 
 ### Calibre Conversion
+
 For best quality, convert the generated EPUB using [Calibre](https://calibre-ebook.com/):
 
 ```bash
@@ -206,6 +212,7 @@ ebook-convert "input.epub" "output.epub"
 ```
 
 ### Kindle Compatibility
+
 Use the `--kindle` option for better Kindle compatibility:
 
 ```bash
@@ -217,6 +224,7 @@ docker run -v "$(pwd)/cookies.json:/app/cookies.json" \
 This adds CSS rules that improve rendering of tables and code blocks on Kindle devices.
 
 To convert for Kindle:
+
 ```bash
 ebook-convert "input.epub" "output.azw3"
 ```
@@ -245,6 +253,7 @@ ebook-convert "input.epub" "output.azw3"
 ### Docker Issues
 
 1. **Volume Mount Problems**
+
    ```bash
    # Ensure absolute paths
    docker run -v "$(pwd)/cookies.json:/app/cookies.json" \
@@ -261,6 +270,7 @@ ebook-convert "input.epub" "output.azw3"
 ## Legal Notice
 
 This tool is for personal and educational use only. Please:
+
 - Respect O'Reilly's Terms of Service
 - Only download books you have legitimate access to
 - Do not redistribute downloaded content
@@ -271,6 +281,7 @@ This tool is for personal and educational use only. Please:
 ## Contributing
 
 Feel free to open issues or submit pull requests. When contributing:
+
 1. Use the dev container environment for consistency
 2. Follow the existing code style
 3. Add tests for new functionality
