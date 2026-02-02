@@ -50,9 +50,28 @@ public sealed class HtmlProcessor(ApiClient client)
             var src = img.GetAttributeValue("src", "");
             if (string.IsNullOrWhiteSpace(src)) continue;
 
-            var final = src.StartsWith("http", StringComparison.OrdinalIgnoreCase)
-                ? src
-                : JoinUrl(chapter.AssetBaseUrl, src);
+            string final;
+            if (src.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+            {
+                final = src;
+            }
+            else if (src.StartsWith("file:///", StringComparison.OrdinalIgnoreCase))
+            {
+                // Handle malformed file:// URLs - convert to proper HTTP URL
+                // file:///api/v2/epubs/urn:orm:book:ID/files/assets/image.png -> https://learning.oreilly.com/api/v2/epubs/...
+                var path = src.Substring(8); // Remove "file:///"
+                final = $"https://learning.oreilly.com/{path}";
+            }
+            else
+            {
+                final = JoinUrl(chapter.AssetBaseUrl, src);
+                // If JoinUrl produced a file:// URL, fix it
+                if (final.StartsWith("file:///", StringComparison.OrdinalIgnoreCase))
+                {
+                    var path = final.Substring(8);
+                    final = $"https://learning.oreilly.com/{path}";
+                }
+            }
 
             if (!globalImages.Contains(final)) globalImages.Add(final);
 
@@ -129,6 +148,17 @@ body{{margin:1em;background-color:transparent!important;}}
     {
         if (string.IsNullOrWhiteSpace(baseUrl)) return pathOrUrl;
         if (Uri.TryCreate(pathOrUrl, UriKind.Absolute, out var abs)) return abs.ToString();
+        
+        // Ensure baseUrl is a valid HTTP URL, not a file path
+        // This fixes cross-platform issues (Linux vs Windows URI parsing)
+        if (!baseUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) && 
+            !baseUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+        {
+            // If baseUrl doesn't have a scheme, prepend the O'Reilly base URL
+            baseUrl = baseUrl.TrimStart('/');
+            baseUrl = $"https://learning.oreilly.com/{baseUrl}";
+        }
+        
         var b = new Uri(baseUrl, UriKind.Absolute);
         return new Uri(b, pathOrUrl).ToString();
     }
