@@ -50,9 +50,21 @@ public sealed class HtmlProcessor(ApiClient client)
             var src = img.GetAttributeValue("src", "");
             if (string.IsNullOrWhiteSpace(src)) continue;
 
-            var final = src.StartsWith("http", StringComparison.OrdinalIgnoreCase)
-                ? src
-                : JoinUrl(chapter.AssetBaseUrl, src);
+            string final;
+            if (src.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+            {
+                final = src;
+            }
+            else if (src.StartsWith("file:///", StringComparison.OrdinalIgnoreCase))
+            {
+                final = ConvertFileUrlToHttps(src);
+            }
+            else
+            {
+                final = JoinUrl(chapter.AssetBaseUrl, src);
+                // If JoinUrl produced a file:// URL, fix it
+                final = ConvertFileUrlToHttps(final);
+            }
 
             if (!globalImages.Contains(final)) globalImages.Add(final);
 
@@ -131,5 +143,23 @@ body{{margin:1em;background-color:transparent!important;}}
         if (Uri.TryCreate(pathOrUrl, UriKind.Absolute, out var abs)) return abs.ToString();
         var b = new Uri(baseUrl, UriKind.Absolute);
         return new Uri(b, pathOrUrl).ToString();
+    }
+
+    private static string ConvertFileUrlToHttps(string fileUrl)
+    {
+        // Handle malformed file:/// URLs - convert to proper HTTPS URL
+        // file:///api/v2/epubs/urn:orm:book:ID/files/assets/image.png -> ApiClient.BaseUrl/api/v2/epubs/...
+        if (!fileUrl.StartsWith("file:///", StringComparison.OrdinalIgnoreCase))
+            return fileUrl;
+        
+        var path = fileUrl[8..]; // Remove "file:///" using range operator for consistency
+        
+        // Validate that there's actual content after "file:///"
+        if (string.IsNullOrWhiteSpace(path))
+            return fileUrl; // Return original if no path
+        
+        // Remove leading slashes to avoid double slashes in final URL
+        path = path.TrimStart('/');
+        return new Uri(ApiClient.BaseUrl, path).ToString();
     }
 }

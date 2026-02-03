@@ -4,18 +4,18 @@ namespace SafariBooksDownloader.Core.Services;
 
 public sealed class ApiClient(HttpClient http)
 {
-    private static readonly Uri Base = new("https://learning.oreilly.com");
+    public static readonly Uri BaseUrl = new("https://learning.oreilly.com");
 
     public async Task<bool> CheckLoginAsync()
     {
-        var resp = await GetAsync(new Uri(Base, "/profile/"));
+        var resp = await GetAsync(new Uri(BaseUrl, "/profile/"));
         return resp?.StatusCode == System.Net.HttpStatusCode.OK
                && resp.Content != null;
     }
 
     public async Task<JsonDocument?> GetBookInfoAsync(string bookId)
     {
-        var url = new Uri(Base, $"/api/v1/book/{bookId}/");
+        var url = new Uri(BaseUrl, $"/api/v1/book/{bookId}/");
         var resp = await GetAsync(url);
         if (resp is null) return null;
         var text = await resp.Content.ReadAsStringAsync();
@@ -29,7 +29,7 @@ public sealed class ApiClient(HttpClient http)
 
         while (true)
         {
-            var url = new Uri(Base, $"/api/v1/book/{bookId}/chapter/?page={page}");
+            var url = new Uri(BaseUrl, $"/api/v1/book/{bookId}/chapter/?page={page}");
             var resp = await GetAsync(url);
             if (resp is null) break;
 
@@ -93,7 +93,7 @@ public sealed class ApiClient(HttpClient http)
     public async Task<byte[]?> DownloadBytesAsync(string url, bool joinBase = false)
     {
         Uri uri = joinBase && !Uri.IsWellFormedUriString(url, UriKind.Absolute)
-            ? new Uri(Base, url)
+            ? new Uri(BaseUrl, url)
             : new Uri(url, UriKind.RelativeOrAbsolute);
 
         var resp = await GetAsync(uri, stream: true);
@@ -108,7 +108,7 @@ public sealed class ApiClient(HttpClient http)
             var resp = await http.GetAsync(url, stream ? HttpCompletionOption.ResponseHeadersRead : HttpCompletionOption.ResponseContentRead);
             if ((int)resp.StatusCode is >= 300 and < 400 && resp.Headers.Location is not null)
             {
-                var next = resp.Headers.Location.IsAbsoluteUri ? resp.Headers.Location : new Uri(Base, resp.Headers.Location);
+                var next = resp.Headers.Location.IsAbsoluteUri ? resp.Headers.Location : new Uri(BaseUrl, resp.Headers.Location);
                 return await GetAsync(next, stream);
             }
             return resp;
