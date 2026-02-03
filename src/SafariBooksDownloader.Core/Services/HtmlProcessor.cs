@@ -148,7 +148,7 @@ body{{margin:1em;background-color:transparent!important;}}
     private static string ConvertFileUrlToHttps(string fileUrl)
     {
         // Handle malformed file:/// URLs - convert to proper HTTPS URL
-        // file:///api/v2/epubs/urn:orm:book:ID/files/assets/image.png -> https://learning.oreilly.com/api/v2/epubs/...
+        // file:///api/v2/epubs/urn:orm:book:ID/files/assets/image.png -> ApiClient.BaseUrl/api/v2/epubs/...
         if (!fileUrl.StartsWith("file:///", StringComparison.OrdinalIgnoreCase))
             return fileUrl;
         
@@ -160,6 +160,6 @@ body{{margin:1em;background-color:transparent!important;}}
         
         // Remove leading slashes to avoid double slashes in final URL
         path = path.TrimStart('/');
-        return $"https://learning.oreilly.com/{path}";
+        return new Uri(ApiClient.BaseUrl, path).ToString();
     }
 }
