@@ -141,17 +141,6 @@ body{{margin:1em;background-color:transparent!important;}}
     {
         if (string.IsNullOrWhiteSpace(baseUrl)) return pathOrUrl;
         if (Uri.TryCreate(pathOrUrl, UriKind.Absolute, out var abs)) return abs.ToString();
-        
-        // Ensure baseUrl is a valid HTTP URL, not a file path
-        // This fixes cross-platform issues (Linux vs Windows URI parsing)
-        // We only handle cases where baseUrl lacks a scheme (not other absolute URIs like ftp://)
-        if (!Uri.TryCreate(baseUrl, UriKind.Absolute, out _))
-        {
-            // If baseUrl is not an absolute URI, prepend the O'Reilly base URL
-            baseUrl = baseUrl.TrimStart('/');
-            baseUrl = $"https://learning.oreilly.com/{baseUrl}";
-        }
-        
         var b = new Uri(baseUrl, UriKind.Absolute);
         return new Uri(b, pathOrUrl).ToString();
     }
