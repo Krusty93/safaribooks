@@ -57,20 +57,13 @@ public sealed class HtmlProcessor(ApiClient client)
             }
             else if (src.StartsWith("file:///", StringComparison.OrdinalIgnoreCase))
             {
-                // Handle malformed file:// URLs - convert to proper HTTP URL
-                // file:///api/v2/epubs/urn:orm:book:ID/files/assets/image.png -> https://learning.oreilly.com/api/v2/epubs/...
-                var path = src.Substring(8); // Remove "file:///"
-                final = $"https://learning.oreilly.com/{path}";
+                final = ConvertFileUrlToHttps(src);
             }
             else
             {
                 final = JoinUrl(chapter.AssetBaseUrl, src);
                 // If JoinUrl produced a file:// URL, fix it
-                if (final.StartsWith("file:///", StringComparison.OrdinalIgnoreCase))
-                {
-                    var path = final.Substring(8);
-                    final = $"https://learning.oreilly.com/{path}";
-                }
+                final = ConvertFileUrlToHttps(final);
             }
 
             if (!globalImages.Contains(final)) globalImages.Add(final);
@@ -151,15 +144,33 @@ body{{margin:1em;background-color:transparent!important;}}
         
         // Ensure baseUrl is a valid HTTP URL, not a file path
         // This fixes cross-platform issues (Linux vs Windows URI parsing)
-        if (!baseUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) && 
-            !baseUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+        // We only handle cases where baseUrl lacks a scheme (not other absolute URIs like ftp://)
+        if (!Uri.TryCreate(baseUrl, UriKind.Absolute, out _))
         {
-            // If baseUrl doesn't have a scheme, prepend the O'Reilly base URL
+            // If baseUrl is not an absolute URI, prepend the O'Reilly base URL
             baseUrl = baseUrl.TrimStart('/');
             baseUrl = $"https://learning.oreilly.com/{baseUrl}";
         }
         
         var b = new Uri(baseUrl, UriKind.Absolute);
         return new Uri(b, pathOrUrl).ToString();
+    }
+
+    private static string ConvertFileUrlToHttps(string fileUrl)
+    {
+        // Handle malformed file:/// URLs - convert to proper HTTPS URL
+        // file:///api/v2/epubs/urn:orm:book:ID/files/assets/image.png -> https://learning.oreilly.com/api/v2/epubs/...
+        if (!fileUrl.StartsWith("file:///", StringComparison.OrdinalIgnoreCase))
+            return fileUrl;
+        
+        var path = fileUrl[8..]; // Remove "file:///" using range operator for consistency
+        
+        // Validate that there's actual content after "file:///"
+        if (string.IsNullOrWhiteSpace(path))
+            return fileUrl; // Return original if no path
+        
+        // Remove leading slashes to avoid double slashes in final URL
+        path = path.TrimStart('/');
+        return $"https://learning.oreilly.com/{path}";
     }
 }

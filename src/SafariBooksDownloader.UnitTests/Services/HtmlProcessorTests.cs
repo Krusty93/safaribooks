@@ -156,4 +156,62 @@ public class HtmlProcessorTests : IDisposable
         Assert.Contains("word-wrap:break-word", result);
         Assert.Contains("word-break:break-word", result);
     }
+
+    [Fact]
+    public void ParseChapterHtml_WithFileUrlWithLeadingSlash_RemovesDoubleSlashes()
+    {
+        // Arrange - Test the fix for double slashes bug
+        var html = @"<html><body><img src=""file:////api/v2/epubs/book/files/image.png"" /></body></html>";
+        var client = new ApiClient(_httpClient);
+        var processor = new HtmlProcessor(client);
+        var chapter = new Chapter { AssetBaseUrl = "https://learning.oreilly.com/api/" };
+        var globalImages = new List<string>();
+
+        // Act
+        processor.ParseChapterHtml(html, "https://learning.oreilly.com", "123", chapter, false, new List<string>(), globalImages);
+
+        // Assert
+        Assert.Single(globalImages);
+        Assert.DoesNotContain("//api", globalImages[0]); // Should not have double slashes
+        Assert.StartsWith("https://learning.oreilly.com/api", globalImages[0]);
+    }
+
+    [Fact]
+    public void ParseChapterHtml_WithEmptyFileUrl_HandlesGracefully()
+    {
+        // Arrange - Test edge case with file:/// and no path
+        var html = @"<html><body><img src=""file:///"" /></body></html>";
+        var client = new ApiClient(_httpClient);
+        var processor = new HtmlProcessor(client);
+        var chapter = new Chapter { AssetBaseUrl = "https://learning.oreilly.com/api/" };
+        var globalImages = new List<string>();
+
+        // Act
+        processor.ParseChapterHtml(html, "https://learning.oreilly.com", "123", chapter, false, new List<string>(), globalImages);
+
+        // Assert
+        Assert.Single(globalImages);
+        // Should return original file:/// since there's no valid path
+        Assert.Equal("file:///", globalImages[0]);
+    }
+
+    [Fact]
+    public void ParseChapterHtml_WithNonHttpAbsoluteBaseUrl_HandlesCorrectly()
+    {
+        // Arrange - Test that only non-absolute URIs are converted
+        var html = @"<html><body><img src=""assets/image.png"" /></body></html>";
+        var client = new ApiClient(_httpClient);
+        var processor = new HtmlProcessor(client);
+        // Use a relative path that should be converted
+        var chapter = new Chapter { AssetBaseUrl = "/api/v2/book/" };
+        var globalImages = new List<string>();
+
+        // Act
+        processor.ParseChapterHtml(html, "https://learning.oreilly.com", "123", chapter, false, new List<string>(), globalImages);
+
+        // Assert
+        Assert.Single(globalImages);
+        Assert.StartsWith("https://learning.oreilly.com/", globalImages[0]);
+        Assert.DoesNotContain("file://", globalImages[0]);
+    }
 }
